@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>StudioFrame</title>
+    <link rel="icon" type="image/png" href="./assets/favicon.png" />
+    <link rel="stylesheet" href="style.css" />
+    <style>
+      body {
+        margin: 0;
+        overflow: hidden;
+      }
+      canvas {
+        display: block;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="light-control-panel">
+      <div class="light-controls">
+        <div class="light-group">
+          <div class="light-header">
+            <h4>Key Light</h4>
+            <label class="switch">
+              <input type="checkbox" id="key-light-toggle" checked />
+              <span class="slider"></span>
+            </label>
+          </div>
+          <div class="control-row">
+            <input
+              type="range"
+              id="key-light-intensity"
+              min="0"
+              max="100"
+              value="100"
+            />
+            <input type="color" id="key-light-color" value="#ffffff" />
+          </div>
+        </div>
+
+        <div class="light-group">
+          <div class="light-header">
+            <h4>Fill Light</h4>
+            <label class="switch">
+              <input type="checkbox" id="fill-light-toggle" checked />
+              <span class="slider"></span>
+            </label>
+          </div>
+          <div class="control-row">
+            <input
+              type="range"
+              id="fill-light-intensity"
+              min="0"
+              max="100"
+              value="100"
+            />
+            <input type="color" id="fill-light-color" value="#ffffff" />
+          </div>
+        </div>
+
+        <div class="light-group">
+          <div class="light-header">
+            <h4>Back Light</h4>
+            <label class="switch">
+              <input type="checkbox" id="back-light-toggle" checked />
+              <span class="slider"></span>
+            </label>
+          </div>
+          <div class="control-row">
+            <input
+              type="range"
+              id="back-light-intensity"
+              min="0"
+              max="100"
+              value="100"
+            />
+            <input type="color" id="back-light-color" value="#ffffff" />
+          </div>
+        </div>
+
+        <div class="light-group">
+          <div class="light-header">
+            <h4>Ambient Light</h4>
+            <label class="switch">
+              <input type="checkbox" id="ambient-light-toggle" checked />
+              <span class="slider"></span>
+            </label>
+          </div>
+          <div class="control-row">
+            <input
+              type="range"
+              id="ambient-light-intensity"
+              min="0"
+              max="100"
+              value="100"
+            />
+            <input type="color" id="ambient-light-color" value="#ffffff" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script type="module" src="./main.js"></script>
+    <script src="./scripts/rangeSlider.js"></script>
+  </body>
+</html>
