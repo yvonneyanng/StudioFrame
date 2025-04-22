@@ -30,7 +30,7 @@ function createScene(renderer) {
     0.1,
     1000
   );
-  camera.position.set(0, 20, 30); // Position camera high and to the side
+  camera.position.set(0, 30, 20); // Position camera high and to the side
   camera.lookAt(0, 0, 0); // Look at the center of the room
 
   // Controls
@@ -39,11 +39,11 @@ function createScene(renderer) {
   controls.update();
 
   // Light
-  const light = new THREE.DirectionalLight(0xffffff, 2);
+  const light = new THREE.DirectionalLight(0xffffff, 0.5);
   light.position.set(5, 5, 5);
   scene.add(light);
 
-  const light2 = new THREE.DirectionalLight(0xffffff, 2);
+  const light2 = new THREE.DirectionalLight(0xffffff, 0.5);
   light2.position.set(-10, -10, -10);
   scene.add(light2);
 
@@ -56,15 +56,16 @@ function createScene(renderer) {
   });
   const floor = new THREE.Mesh(floorGeometry, floorMaterial);
   floor.position.y = -0.25;
+  floor.position.z = -0.25;
   floor.receiveShadow = true;
   scene.add(floor);
 
   // Origin marker sphere
-  const sphereGeometry = new THREE.SphereGeometry(0.2, 32, 32);
-  const sphereMaterial = new THREE.MeshStandardMaterial({ color: 0xff0000 });
-  const originMarker = new THREE.Mesh(sphereGeometry, sphereMaterial);
-  originMarker.position.set(0, 0, 0);
-  scene.add(originMarker);
+  // const sphereGeometry = new THREE.SphereGeometry(0.2, 32, 32);
+  // const sphereMaterial = new THREE.MeshStandardMaterial({ color: 0xff0000 });
+  // const originMarker = new THREE.Mesh(sphereGeometry, sphereMaterial);
+  // originMarker.position.set(0, 0, 0);
+  // scene.add(originMarker);
 
   // Reusable wall creator
   function createWall(

@@ -16,15 +16,25 @@
     </style>
   </head>
   <body>
+    <div id="camera-preview">
+      <div class="preview-header">
+        <div class="camera-tabs">
+          <button class="camera-tab active" data-camera="Camera1">
+            Camera 1
+          </button>
+          <button class="camera-tab" data-camera="Camera2">Camera 2</button>
+        </div>
+      </div>
+    </div>
     <div id="light-control-panel">
       <div class="light-controls">
         <div class="light-group">
           <div class="light-header">
-            <h4>Key Light</h4>
             <label class="switch">
               <input type="checkbox" id="key-light-toggle" checked />
               <span class="slider"></span>
             </label>
+            <h4>K Baby</h4>
           </div>
           <div class="control-row">
             <input
@@ -40,11 +50,11 @@
 
         <div class="light-group">
           <div class="light-header">
-            <h4>Fill Light</h4>
             <label class="switch">
               <input type="checkbox" id="fill-light-toggle" checked />
               <span class="slider"></span>
             </label>
+            <h4>Umbrella</h4>
           </div>
           <div class="control-row">
             <input
@@ -60,11 +70,11 @@
 
         <div class="light-group">
           <div class="light-header">
-            <h4>Back Light</h4>
             <label class="switch">
               <input type="checkbox" id="back-light-toggle" checked />
               <span class="slider"></span>
             </label>
+            <h4>Vista Beam</h4>
           </div>
           <div class="control-row">
             <input
@@ -78,23 +88,24 @@
           </div>
         </div>
 
-        <div class="light-group">
+        <div
+          class="light-group"
+          id="backdrop-controls"
+          style="opacity: 0.5; pointer-events: none"
+        >
           <div class="light-header">
-            <h4>Ambient Light</h4>
-            <label class="switch">
-              <input type="checkbox" id="ambient-light-toggle" checked />
-              <span class="slider"></span>
-            </label>
+            <h4 style="margin-left: 3px">Backdrop Size</h4>
           </div>
           <div class="control-row">
             <input
               type="range"
-              id="ambient-light-intensity"
-              min="0"
-              max="100"
-              value="100"
+              id="backdrop-scale"
+              min="3"
+              max="5"
+              value="3"
+              step="0.1"
             />
-            <input type="color" id="ambient-light-color" value="#ffffff" />
+            <button id="reset-backdrop" style="padding: 5px">Reset</button>
           </div>
         </div>
       </div>

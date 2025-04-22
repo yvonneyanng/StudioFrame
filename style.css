@@ -8,6 +8,7 @@
   font-family: sans-serif;
   z-index: 10;
   border-radius: 10px;
+  border: 2px solid #fff;
 }
 
 #light-control-panel h3 {
@@ -35,6 +36,10 @@
 
 .light-group h4 {
   margin: 0;
+  margin-left: 8px;
+  font-weight: 600;
+  font-family: monospace;
+  color: #000;
   font-size: 14px;
   font-weight: 500;
 }
@@ -52,7 +57,6 @@
   display: inline-block;
   width: 28px;
   height: 16px;
-  margin-left: 8px;
 }
 
 .switch input {
@@ -184,4 +188,85 @@ input[type="color"]::-webkit-color-swatch-wrapper {
 input[type="color"]::-webkit-color-swatch {
   border: none;
   border-radius: 4px;
+}
+
+/* Backdrop control styles */
+#backdrop-controls.enabled {
+  opacity: 1 !important;
+  pointer-events: auto !important;
+}
+
+#reset-backdrop {
+  background: #000;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  transition: opacity 0.2s;
+}
+
+#reset-backdrop:hover {
+  opacity: 0.8;
+}
+
+#camera-preview {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  width: 320px;
+  background-color: rgba(255, 255, 255, 0.5);
+  border-radius: 10px;
+  border: 2px solid #fff;
+  overflow: hidden;
+  z-index: 10;
+}
+
+.preview-header {
+  padding: 8px 12px;
+  font-family: monospace;
+  color: #000;
+  font-size: 14px;
+  font-weight: 500;
+  background-color: rgba(255, 255, 255, 0.8);
+}
+
+.camera-selector {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+#camera-label {
+  min-width: 70px;
+}
+
+.camera-tabs {
+  display: flex;
+  gap: 1px;
+  background-color: rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+  padding: 2px;
+}
+
+.camera-tab {
+  flex: 1;
+  padding: 4px 8px;
+  border: none;
+  background: transparent;
+  color: #000;
+  font-family: monospace;
+  font-size: 12px;
+  cursor: pointer;
+  border-radius: 3px;
+  transition: all 0.2s ease;
+}
+
+.camera-tab:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.camera-tab.active {
+  background-color: #000;
+  color: white;
 }
