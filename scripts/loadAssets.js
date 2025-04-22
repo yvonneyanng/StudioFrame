@@ -11,6 +11,9 @@ const mouse = new THREE.Vector2();
 const plane = new THREE.Plane(new THREE.Vector3(0, 1, 0));
 const intersectionPoint = new THREE.Vector3();
 
+const BASE_MODEL_URL =
+  "https://studio-frame.s3.us-east-1.amazonaws.com/models/";
+
 // List of draggable objects names
 const DRAGGABLE_OBJECTS = [
   "KBabyLight",
@@ -288,82 +291,75 @@ function loadStudioAssets(scene, camera, renderer, controls) {
     }
   }
 
-  gltfLoader.load(
-    "./assets/models/BackdropScreen.glb",
-    (gltf) => {
-      const screen = gltf.scene;
-      screen.position.set(0, 0, -6);
-      screen.scale.set(
-        DEFAULT_BACKDROP_SCALE,
-        DEFAULT_BACKDROP_SCALE,
-        DEFAULT_BACKDROP_SCALE
-      );
-      screen.name = "BackdropScreen";
-      screen.traverse((child) => {
-        if (child.isMesh) {
-          child.castShadow = true;
-          child.receiveShadow = true;
-          // Make the material non-reflective
-          if (child.material) {
-            child.material.roughness = 1;
-            child.material.metalness = 0;
-          }
-        }
-      });
-      scene.add(screen);
-      backdropScreen = screen;
+  // Load models with error handling
+  function loadModel(url, name, onLoad, position, rotation, scale) {
+    console.log(`Attempting to load model: ${name}`);
+    console.log(`Full URL: ${url}`);
 
-      // Initialize backdrop controls
+    gltfLoader.load(
+      url,
+      (gltf) => {
+        console.log(`Successfully loaded: ${name}`);
+        const model = gltf.scene;
+        model.position.copy(position);
+        if (rotation) model.rotation.copy(rotation);
+        model.scale.set(scale, scale, scale);
+        model.name = name;
+        model.traverse((child) => {
+          if (child.isMesh) {
+            child.castShadow = true;
+            child.receiveShadow = true;
+          }
+        });
+        scene.add(model);
+        if (onLoad) onLoad(model);
+      },
+      (xhr) => {
+        console.log(
+          `Loading ${name}: ${(xhr.loaded / xhr.total) * 100}% loaded`
+        );
+      },
+      (error) => {
+        console.error(`Failed to load ${name}:`, error);
+        console.error(`Error details:`, {
+          message: error.message,
+          url: url,
+          name: name,
+        });
+      }
+    );
+  }
+
+  // Load BackdropScreen
+  loadModel(
+    `${BASE_MODEL_URL}BackdropScreen.glb`,
+    "BackdropScreen",
+    (screen) => {
+      backdropScreen = screen;
       setupBackdropControls(backdropScreen);
     },
-    undefined,
-    (error) => {
-      console.error("Failed to load backdrop screen:", error);
-    }
+    new THREE.Vector3(0, 0, -6),
+    null,
+    DEFAULT_BACKDROP_SCALE
   );
 
   // Load Astronaut
-  gltfLoader.load(
-    "./assets/models/Astronaut.glb",
-    (gltf) => {
-      const astronaut = gltf.scene;
-      astronaut.position.set(0, 0, -4); // Position to the right of the chair
-      astronaut.scale.set(2, 2, 2);
-      astronaut.name = "Astronaut";
-      astronaut.traverse((child) => {
-        if (child.isMesh) {
-          child.castShadow = true;
-          child.receiveShadow = true;
-        }
-      });
-      scene.add(astronaut);
-    },
-    undefined,
-    (error) => {
-      console.error("Failed to load Astronaut.glb:", error);
-    }
+  loadModel(
+    `${BASE_MODEL_URL}Astronaut.glb`,
+    "Astronaut",
+    null,
+    new THREE.Vector3(0, 0, -4),
+    null,
+    2
   );
 
   // Load KBaby Light
-  gltfLoader.load(
-    "./assets/models/KBabyLight.glb",
-    (gltf) => {
-      const KBLight = gltf.scene;
-      KBLight.position.set(8, 0, -5);
-      KBLight.scale.set(3.5, 3.5, 3.5);
-      KBLight.name = "KBabyLight";
-      KBLight.traverse((child) => {
-        if (child.isMesh) {
-          child.castShadow = true;
-          child.receiveShadow = true;
-        }
-      });
-      scene.add(KBLight);
-
-      // Create and setup spotlight for KBabyLight
+  loadModel(
+    `${BASE_MODEL_URL}KBabyLight.glb`,
+    "KBabyLight",
+    (KBLight) => {
       const kbSpotlight = new StudioLight(scene);
-      // Set the light origin offset based on the model's structure
-      kbSpotlight.setOffset(0, 6, 0); // Adjust these values to match the bulb position in the model
+      kbSpotlight.setOffset(0, 6, 0);
       kbSpotlight.updatePosition(KBLight.position, KBLight.rotation);
       studioLights.set("KBabyLight", kbSpotlight);
 
@@ -390,31 +386,18 @@ function loadStudioAssets(scene, camera, renderer, controls) {
         });
       }
     },
-    undefined,
-    (error) => {
-      console.error("Failed to load KBabyLight.glb:", error);
-    }
+    new THREE.Vector3(8, 0, -5),
+    null,
+    3.5
   );
 
-  gltfLoader.load(
-    "./assets/models/VistaBeamLight.glb",
-    (gltf) => {
-      const VBlight = gltf.scene;
-      VBlight.position.set(-8, 0, -5);
-      VBlight.scale.set(4, 4, 4);
-      VBlight.name = "VistaBeam";
-      VBlight.rotation.y = -Math.PI / 4 + (40 * Math.PI) / 180;
-      VBlight.traverse((child) => {
-        if (child.isMesh) {
-          child.castShadow = true;
-          child.receiveShadow = true;
-        }
-      });
-      scene.add(VBlight);
-
-      // Create and setup vista beam light
+  // Load VistaBeam Light
+  loadModel(
+    `${BASE_MODEL_URL}VistaBeamLight.glb`,
+    "VistaBeam",
+    (VBlight) => {
       const vistaBeamLight = new VistaBeamLight(scene);
-      vistaBeamLight.setOffset(0, 7, 0); // Adjust z offset to match the light strips
+      vistaBeamLight.setOffset(0, 7, 0);
       vistaBeamLight.updatePosition(VBlight.position, VBlight.rotation);
       studioLights.set("VistaBeam", vistaBeamLight);
 
@@ -441,31 +424,18 @@ function loadStudioAssets(scene, camera, renderer, controls) {
         });
       }
     },
-    undefined,
-    (error) => {
-      console.error("Failed to load VistaBeamLight.glb:", error);
-    }
+    new THREE.Vector3(-8, 0, -5),
+    new THREE.Euler(0, -Math.PI / 4 + (40 * Math.PI) / 180, 0),
+    4
   );
 
-  gltfLoader.load(
-    "./assets/models/UmbrellaLight.glb",
-    (gltf) => {
-      const Ulight = gltf.scene;
-      Ulight.position.set(7, 0, 5);
-      Ulight.scale.set(4, 4, 4);
-      Ulight.name = "UmbrellaLight";
-      Ulight.rotation.y = -Math.PI / 4; // Same initial rotation as KBabyLight
-      Ulight.traverse((child) => {
-        if (child.isMesh) {
-          child.castShadow = true;
-          child.receiveShadow = true;
-        }
-      });
-      scene.add(Ulight);
-
-      // Create and setup umbrella light
+  // Load Umbrella Light
+  loadModel(
+    `${BASE_MODEL_URL}UmbrellaLight.glb`,
+    "UmbrellaLight",
+    (Ulight) => {
       const umbrellaSpotlight = new UmbrellaStudioLight(scene);
-      umbrellaSpotlight.setOffset(0, 6, 0); // Set the light origin offset
+      umbrellaSpotlight.setOffset(0, 6, 0);
       umbrellaSpotlight.updatePosition(Ulight.position, Ulight.rotation);
       studioLights.set("UmbrellaLight", umbrellaSpotlight);
 
@@ -492,82 +462,39 @@ function loadStudioAssets(scene, camera, renderer, controls) {
         });
       }
     },
-    undefined,
-    (error) => {
-      console.error("Failed to load UmbrellaLight.glb:", error);
-    }
+    new THREE.Vector3(7, 0, 5),
+    new THREE.Euler(0, -Math.PI / 4, 0),
+    4
   );
 
   // Load Clapperboard
-  gltfLoader.load(
-    "./assets/models/Clapperboard.glb",
-    (gltf) => {
-      const clapperboard = gltf.scene;
-      clapperboard.position.set(-3, 0.25, -2);
-      clapperboard.rotation.y = Math.PI / 4; // 45 degrees in radians
-      clapperboard.scale.set(4, 4, 4);
-      clapperboard.name = "Clapperboard";
-      clapperboard.traverse((child) => {
-        if (child.isMesh) {
-          child.castShadow = true;
-          child.receiveShadow = true;
-        }
-      });
-      scene.add(clapperboard);
-    },
-    undefined,
-    (error) => {
-      console.error("Failed to load Clapperboard.glb:", error);
-    }
+  loadModel(
+    `${BASE_MODEL_URL}Clapperboard.glb`,
+    "Clapperboard",
+    null,
+    new THREE.Vector3(-3, 0.25, -2),
+    new THREE.Euler(0, Math.PI / 4, 0),
+    4
   );
 
   // Load Camera1
-  gltfLoader.load(
-    "./assets/models/Camera1.glb",
-    (gltf) => {
-      const camera1 = gltf.scene;
-      camera1.position.set(-7, 0, 4);
-      camera1.scale.set(3, 3, 3);
-      camera1.rotation.set(0, -Math.PI * 0.75, 0); // Rotate 135 degrees right
-      camera1.name = "Camera1";
-      camera1.traverse((child) => {
-        if (child.isMesh) {
-          child.castShadow = true;
-          child.receiveShadow = true;
-        }
-      });
-      scene.add(camera1);
-
-      // Initial preview camera update
-      updatePreviewCamera(scene);
-    },
-    undefined,
-    (error) => {
-      console.error("Failed to load Camera1.glb:", error);
-    }
+  loadModel(
+    `${BASE_MODEL_URL}Camera1.glb`,
+    "Camera1",
+    null,
+    new THREE.Vector3(-7, 0, 4),
+    new THREE.Euler(0, -Math.PI * 0.75, 0),
+    3
   );
 
   // Load Camera2
-  gltfLoader.load(
-    "./assets/models/Camera2.glb",
-    (gltf) => {
-      const camera2 = gltf.scene;
-      camera2.position.set(0, 0, 5);
-      camera2.scale.set(3, 3, 3);
-      camera2.rotation.set(0, -Math.PI / 2, 0);
-      camera2.name = "Camera2";
-      camera2.traverse((child) => {
-        if (child.isMesh) {
-          child.castShadow = true;
-          child.receiveShadow = true;
-        }
-      });
-      scene.add(camera2);
-    },
-    undefined,
-    (error) => {
-      console.error("Failed to load Camera2.glb:", error);
-    }
+  loadModel(
+    `${BASE_MODEL_URL}Camera2.glb`,
+    "Camera2",
+    null,
+    new THREE.Vector3(0, 0, 5),
+    new THREE.Euler(0, -Math.PI / 2, 0),
+    3
   );
 }
 
