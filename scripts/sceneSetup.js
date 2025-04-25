@@ -1,7 +1,7 @@
 import * as THREE from "https://cdn.skypack.dev/three@0.136.0/build/three.module.js";
 import { OrbitControls } from "https://cdn.skypack.dev/three@0.136.0/examples/jsm/controls/OrbitControls.js";
 
-// Load textures
+// =============================== TEXTURES ===============================
 const textureLoader = new THREE.TextureLoader();
 const brickTexture = textureLoader.load(
   "./assets/textures/red_brick_diff_4k.jpg"
@@ -10,35 +10,36 @@ const floorTexture = textureLoader.load(
   "./assets/textures/gravel_concrete_03_diff_4k.jpg"
 );
 
-// Set textures to repeat and wrap correctly
+// =============================== TEXTURE SETUP ===============================
 brickTexture.wrapS = THREE.RepeatWrapping;
 brickTexture.wrapT = THREE.RepeatWrapping;
 brickTexture.repeat.set(2, 2);
 
 floorTexture.wrapS = THREE.RepeatWrapping;
 floorTexture.wrapT = THREE.RepeatWrapping;
-floorTexture.repeat.set(4, 4); // Adjust the repeat value to control texture tiling
+floorTexture.repeat.set(4, 4);
 
+// =============================== SCENE SETUP ===============================
 function createScene(renderer) {
   const scene = new THREE.Scene();
   scene.background = new THREE.Color(0x000000);
 
-  // Camera
+  // =============================== CAMERA ===============================
   const camera = new THREE.PerspectiveCamera(
     45,
     window.innerWidth / window.innerHeight,
     0.1,
     1000
   );
-  camera.position.set(0, 30, 20); // Position camera high and to the side
-  camera.lookAt(0, 0, 0); // Look at the center of the room
+  camera.position.set(0, 30, 20);
+  camera.lookAt(0, 0, 0);
 
-  // Controls
+  // =============================== CONTROLS ===============================
   const controls = new OrbitControls(camera, renderer.domElement);
   controls.target.set(0, 0, 0);
   controls.update();
 
-  // Light
+  // =============================== LIGHTS ===============================
   const light = new THREE.DirectionalLight(0xffffff, 0.5);
   light.position.set(5, 5, 5);
   scene.add(light);
@@ -47,7 +48,7 @@ function createScene(renderer) {
   light2.position.set(-10, -10, -10);
   scene.add(light2);
 
-  // Floor
+  // =============================== FLOOR ===============================
   const floorGeometry = new THREE.BoxGeometry(26.66, 0.5, 26.66);
   const floorMaterial = new THREE.MeshStandardMaterial({
     map: floorTexture,
@@ -60,14 +61,7 @@ function createScene(renderer) {
   floor.receiveShadow = true;
   scene.add(floor);
 
-  // Origin marker sphere
-  // const sphereGeometry = new THREE.SphereGeometry(0.2, 32, 32);
-  // const sphereMaterial = new THREE.MeshStandardMaterial({ color: 0xff0000 });
-  // const originMarker = new THREE.Mesh(sphereGeometry, sphereMaterial);
-  // originMarker.position.set(0, 0, 0);
-  // scene.add(originMarker);
-
-  // Reusable wall creator
+  // =============================== WALLS ===============================
   function createWall(
     width,
     height,
@@ -107,11 +101,11 @@ function createScene(renderer) {
     return wall;
   }
 
-  // Back wall
+  // =============================== BACK WALL ===============================
   const backWall = createWall(26.66, 16, [0, 8, -13.33], [0, 0, 0]);
   scene.add(backWall);
 
-  // Side walls positioned to slightly overlap with back wall
+  // =============================== LEFT WALL ===============================
   const leftWall = createWall(
     26.66,
     16,
@@ -120,6 +114,7 @@ function createScene(renderer) {
   );
   scene.add(leftWall);
 
+  // =============================== RIGHT WALL ===============================
   const rightWall = createWall(
     26.66,
     16,

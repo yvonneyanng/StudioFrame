@@ -1,5 +1,4 @@
 import * as THREE from "https://cdn.skypack.dev/three@0.136.0/build/three.module.js";
-import { OrbitControls } from "https://cdn.skypack.dev/three@0.136.0/examples/jsm/controls/OrbitControls.js";
 
 import { createScene } from "./scripts/sceneSetup.js";
 import { animate } from "./scripts/animationLoop.js";
